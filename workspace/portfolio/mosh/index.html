@@ -1,0 +1,140 @@
+﻿<html>
+<head>
+	<title>Hello World!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/fixedsys-css/css/fixedsys.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+	<style>
+		html {
+			background-color: #000000;
+			font-family: fixedsys;
+		}
+		body {
+  			display: flex;
+  			justify-content: center;
+  			align-items: center;
+  			height: 100vh;
+  			margin: 0;
+  			flex-direction: column;
+		}
+		.exclamation {
+			animation: blink 0.9s infinite;
+		}
+		@keyframes blink {
+			0% { opacity: 1; }
+			50% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+		h1 {
+			color: #ffffff;
+			margin: 0;
+			font-size: 70px;
+			text-transform: uppercase;
+			font-weight: bold;
+			letter-spacing: 2px;
+			position: relative;
+			display: inline-block;
+			text-shadow:
+				1px 1px 2px rgba(0,0,0,0.3),
+				2px 2px 4px rgba(0,0,0,0.3),
+				3px 3px 6px rgba(0,0,0,0.3),
+				4px 4px 8px rgba(0,0,0,0.3);
+			transition: transform 0.2s ease, text-shadow 0.2s ease;
+		}
+
+		.icons {
+			margin-top: 40px;
+		}
+		.icons a {
+			font-size: 30px;
+			margin: 20px;
+			color: #ffffff;
+			text-decoration: none;
+		}
+		.icons a:hover {
+			font-size: 40px;
+			color: #cccccc;
+		}
+	</style>
+</head>
+<body>
+	<h1 id="text" onmouseover="escapeText(event)" onmouseout="startTimer()">Hey, I'm <span style="color:#E6E6EE">Mosh</span><span class="exclamation">!</span></h1>
+	<div class="icons">
+		<a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+		<a href="https://ko-fi.com" target="_blank"><i class="fa-brands fa-cc-stripe"></i></a>
+		<a href="https://discord.com" target="_blank"><i class="fa-brands fa-discord"></i></a>
+	</div>
+
+	<script>
+		let hasInteracted = false; // This flag tracks if the user has interacted with the text
+		let originalX = 0, originalY = 0; // Store the original position of the text
+		let timer; // Variable to store the timeout timer
+
+		// Save the initial position of the text
+		window.onload = function() {
+			const textElement = document.getElementById("text");
+			const rect = textElement.getBoundingClientRect();
+			originalX = rect.left;
+			originalY = rect.top;
+		};
+
+		// Function to make the text escape the mouse, but not go out of the viewport
+		function escapeText(event) {
+			if (!hasInteracted) {
+				hasInteracted = true; // Mark that interaction has happened
+			}
+
+			const textElement = document.getElementById("text");
+
+			// Get the coordinates of the mouse
+			let mouseX = event.clientX;
+			let mouseY = event.clientY;
+
+			// Calculate a random offset in both X and Y directions
+			let offsetX = Math.random() * 200 - 100;  // Random offset in X direction
+			let offsetY = Math.random() * 200 - 100;  // Random offset in Y direction
+
+			// Ensure the text stays within the bounds of the viewport
+			let newX = mouseX + offsetX - textElement.offsetWidth / 2;
+			let newY = mouseY + offsetY - textElement.offsetHeight / 2;
+
+			// Prevent text from moving out of the left/right bounds of the page
+			if (newX < 0) newX = 0;
+			if (newX + textElement.offsetWidth > window.innerWidth) {
+				newX = window.innerWidth - textElement.offsetWidth;
+			}
+
+			// Prevent text from moving out of the top/bottom bounds of the page
+			if (newY < 0) newY = 0;
+			if (newY + textElement.offsetHeight > window.innerHeight) {
+				newY = window.innerHeight - textElement.offsetHeight;
+			}
+
+			// Apply the new position with a smooth transition
+			textElement.style.transition = "all 0.5s ease";  // Smooth movement
+			textElement.style.position = "absolute";
+			textElement.style.left = newX + "px";
+			textElement.style.top = newY + "px";
+
+			// Clear any existing timer if the mouse is moving
+			clearTimeout(timer);
+		}
+
+		// Function to start the timer for returning the text to its original position
+		function startTimer() {
+			// Set a timer to reset the text position after 10 seconds
+			timer = setTimeout(returnToOriginalPosition, 10000); // 10 seconds
+		}
+
+		// Function to return the text to its original position
+		function returnToOriginalPosition() {
+			const textElement = document.getElementById("text");
+
+			textElement.style.transition = "all 0.5s ease";  // Smooth movement back
+			textElement.style.position = "absolute";
+			textElement.style.left = originalX + "px";
+			textElement.style.top = originalY + "px";
+		}
+	</script>
+</body>
+</html>
